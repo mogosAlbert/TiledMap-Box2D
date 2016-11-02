@@ -76,7 +76,7 @@ public class ScrGame implements Screen {
     public void show() {
         Map1 = new TmxMapLoader().load("Maps/level1.tmx");
         MapRender = new OrthogonalTiledMapRenderer(Map1);
-        worlMain = new World(new Vector2(0, -70), true);
+        worlMain = new World(new Vector2(0, -90), true);
         MapCam = new OrthographicCamera();
         Spr1 = new SprMain(this, 300, 200);
         sprBatch = new SpriteBatch();
