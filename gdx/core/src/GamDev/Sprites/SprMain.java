@@ -28,13 +28,14 @@ public class SprMain extends Sprite {
     private Vector2 vVelocity;
     private TiledMapTileLayer collisionLayer;
     private float fSpeed = 60 * 2, fGravity = 60 * 1.8f, fTimer;
-    private int nFrame = 0, nOffset = 0;
+    private int nFrame = 0, nOffset = 0, nRange = 4;
     public World worlMain;
     public Body bodMain;
     public BodyDef bdMain;
     public FixtureDef fdMain;
     public FixtureDef fdFeet;
-    private boolean isFlip;
+    public FixtureDef fdBlade;
+    private boolean isFlip, isAttack;
 
     public SprMain(ScrGame scrMain, float fX, float fY) {
         this.worlMain = scrMain.worlMain;
@@ -42,24 +43,10 @@ public class SprMain extends Sprite {
         vVelocity = new Vector2();
         setSize(20, 25);
         imgWolv = new TextureAtlas("Wolverine/Wolverine.pack");
-        for (int i = 0; i < 3; i++) {
-            String sFile = "Stand" + i;
-            texFrames.add(imgWolv.findRegion(sFile));
-        }
-        aniStand = new Animation(12f, texFrames);
-        texFrames.clear();
-        for (int i = 0; i < 6; i++) {
-            String sFile = "Walk" + i;
-            texFrames.add(imgWolv.findRegion(sFile));
-        }
-        aniWalk = new Animation(9f, texFrames);
-        texFrames.clear();
-        for (int i = 0; i < 3; i++) {
-            String sFile = "Jump" + i;
-            texFrames.add(imgWolv.findRegion(sFile));
-        }
-        aniJump = new Animation(35f, texFrames);
-        texFrames.clear();
+        aniStand = getAnimation("Stand", 3, imgWolv, 12f);
+        aniWalk = getAnimation("Walk", 6, imgWolv, 9f);
+        aniJump = getAnimation("Jump", 3, imgWolv, 25f);
+        aniAttack = getAnimation("Attack", 4, imgWolv, 12f);
         texFall = new TextureRegion(imgWolv.findRegion("Falling"));
         setX(fX);
         setY(fY);
@@ -78,6 +65,10 @@ public class SprMain extends Sprite {
         fdFeet.shape = pShape;
         fdFeet.friction = 10f;
         bodMain.createFixture(fdFeet);
+        fdBlade = new FixtureDef();
+        pShape.setAsBox(5, 4, new Vector2(bodMain.getLocalCenter().x + nRange, bodMain.getLocalCenter().y), 0);
+        fdBlade.shape = pShape;
+        bodMain.createFixture(fdBlade);
     }
 
     @Override
@@ -89,6 +80,10 @@ public class SprMain extends Sprite {
         fTimer++;
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             bodMain.applyLinearImpulse(new Vector2(0, 100f), bodMain.getWorldCenter(), true);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            isAttack = true;
+            fTimer = 0;
         }
         if (bodMain.getLinearVelocity().y == 0) {
             bodMain.getLinearVelocity().x = 0;
@@ -102,34 +97,76 @@ public class SprMain extends Sprite {
         }
         if (bodMain.getLinearVelocity().y == 0) {
             setSize(20, 25);
-            if (bodMain.getLinearVelocity().x != 0) {
-                setRegion(getFrame(aniWalk));
+
+            if (isAttack) {
+                if(nRange < 9) {
+                    nRange += 2;
+                }
+                bodMain.getFixtureList().removeIndex(2);
+                PolygonShape pShape = new PolygonShape();
+                pShape.setAsBox(5, 4, new Vector2(bodMain.getLocalCenter().x + nRange, bodMain.getLocalCenter().y), 0);
+                fdBlade.shape = pShape;
+                bodMain.createFixture(fdBlade);
+                setRegion(getFrame(aniAttack));
+                setSize(getFrame(aniAttack).getRegionWidth() / 2.7f, getFrame(aniAttack).getRegionHeight() / 2.7f);
             } else {
-                setRegion(getFrame(aniStand));
+                if (bodMain.getLinearVelocity().x != 0) {
+                    setRegion(getFrame(aniWalk));
+                } else {
+                    setRegion(getFrame(aniStand));
+                }
             }
         } else {
             if (bodMain.getLinearVelocity().y > 0) {
                 System.out.println("f");
                 setRegion(getFrame(aniJump));
-                setSize(getFrame(aniJump).getRegionWidth() / 3, getFrame(aniJump).getRegionHeight() / 3);
+                setSize(getFrame(aniJump).getRegionWidth() / 2.7f, getFrame(aniJump).getRegionHeight() / 2.7f);
             } else {
-                setSize(20,25);
-                if(isFlip && !texFall.isFlipX()) {
-                    texFall.flip(isFlip, false);
+                setSize(20, 25);
+                if (isFlip && !texFall.isFlipX()) {
+                    texFall.flip(true, false);
+                } else if (!isFlip && texFall.isFlipX()) {
+                    texFall.flip(true, isFlip);
                 }
                 setRegion(texFall);
+                setSize(texFall.getRegionWidth() / 2.7f, texFall.getRegionHeight() / 2.7f);
             }
         }
     }
 
     public TextureRegion getFrame(Animation aniTemp) {
         TextureRegion texOut;
-        texOut = aniTemp.getKeyFrame(fTimer, true);
+        if(aniTemp == aniAttack) {
+            texOut = aniTemp.getKeyFrame(fTimer, false);
+            if(aniTemp.getKeyFrameIndex(fTimer) == 3) {
+                isAttack = false;
+                nRange = 4;
+                bodMain.getFixtureList().removeIndex(2);
+                PolygonShape pShape = new PolygonShape();
+                pShape.setAsBox(5, 4, new Vector2(bodMain.getLocalCenter().x + nRange, bodMain.getLocalCenter().y), 0);
+                fdBlade.shape = pShape;
+                bodMain.createFixture(fdBlade);
+            }
+        } else {
+            texOut = aniTemp.getKeyFrame(fTimer, true);
+        }
         if (isFlip && !texOut.isFlipX()) {
             texOut.flip(true, false);
         } else if (!isFlip && texOut.isFlipX()) {
             texOut.flip(true, false);
         }
         return texOut;
+    }
+
+    public Animation getAnimation(String sFile, int nLength, TextureAtlas texPack, float fSpeed) {
+        Animation aniTemp;
+        String FileName;
+        Array<TextureRegion> arrFrames = new Array<TextureRegion>();
+        for (int i = 0; i < nLength; i++) {
+            FileName = sFile + i;
+            arrFrames.add(texPack.findRegion(FileName));
+        }
+        aniTemp = new Animation(fSpeed, arrFrames);
+        return aniTemp;
     }
 }
