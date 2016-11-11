@@ -1,13 +1,16 @@
 package GamDev;
 import com.badlogic.gdx.Game;
-import GamDev.Screens.ScrGame;
+import GamDev.Screens.*;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 public class GamDev extends Game {
     public static float ppt = 16;
+    public static SpriteBatch sbMain;
     @Override
     public void create() {
-        setScreen(new ScrGame());
+        sbMain = new SpriteBatch();
+        setScreen(new ScrMainMenu());
     }
     @Override
     public void dispose() {

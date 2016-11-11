@@ -23,7 +23,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class ScrGame implements Screen {
 
-    public SpriteBatch sprBatch;
     private TiledMap Map1;
     private OrthogonalTiledMapRenderer MapRender;
     private OrthographicCamera MapCam;
@@ -79,8 +78,7 @@ public class ScrGame implements Screen {
         worlMain = new World(new Vector2(0, -90), true);
         MapCam = new OrthographicCamera();
         Spr1 = new SprMain(this, 300, 200);
-        sprBatch = new SpriteBatch();
-        hudMain = new hudMain(sprBatch);
+        hudMain = new hudMain(GamDev.GamDev.sbMain);
         B2DR = new Box2DDebugRenderer();
         B2World1 = new WorldLoader(this);
     }

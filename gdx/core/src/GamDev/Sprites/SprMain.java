@@ -34,7 +34,6 @@ public class SprMain extends Sprite {
     public BodyDef bdMain;
     public FixtureDef fdMain;
     public FixtureDef fdFeet;
-    public FixtureDef fdBlade;
     private boolean isFlip, isAttack;
 
     public SprMain(ScrGame scrMain, float fX, float fY) {
@@ -65,10 +64,6 @@ public class SprMain extends Sprite {
         fdFeet.shape = pShape;
         fdFeet.friction = 10f;
         bodMain.createFixture(fdFeet);
-        fdBlade = new FixtureDef();
-        pShape.setAsBox(5, 4, new Vector2(bodMain.getLocalCenter().x + nRange, bodMain.getLocalCenter().y), 0);
-        fdBlade.shape = pShape;
-        bodMain.createFixture(fdBlade);
     }
 
     @Override
@@ -102,11 +97,6 @@ public class SprMain extends Sprite {
                 if(nRange < 9) {
                     nRange += 2;
                 }
-                bodMain.getFixtureList().removeIndex(2);
-                PolygonShape pShape = new PolygonShape();
-                pShape.setAsBox(5, 4, new Vector2(bodMain.getLocalCenter().x + nRange, bodMain.getLocalCenter().y), 0);
-                fdBlade.shape = pShape;
-                bodMain.createFixture(fdBlade);
                 setRegion(getFrame(aniAttack));
                 setSize(getFrame(aniAttack).getRegionWidth() / 2.7f, getFrame(aniAttack).getRegionHeight() / 2.7f);
             } else {
@@ -141,11 +131,6 @@ public class SprMain extends Sprite {
             if(aniTemp.getKeyFrameIndex(fTimer) == 3) {
                 isAttack = false;
                 nRange = 4;
-                bodMain.getFixtureList().removeIndex(2);
-                PolygonShape pShape = new PolygonShape();
-                pShape.setAsBox(5, 4, new Vector2(bodMain.getLocalCenter().x + nRange, bodMain.getLocalCenter().y), 0);
-                fdBlade.shape = pShape;
-                bodMain.createFixture(fdBlade);
             }
         } else {
             texOut = aniTemp.getKeyFrame(fTimer, true);

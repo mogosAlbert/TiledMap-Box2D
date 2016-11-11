@@ -21,6 +21,7 @@ public class WorldLoader {
         FixtureDef fixdefMain = new FixtureDef();
         Body bodMain;
         float fricSet = 0.01f;
+        //Loading Ground into Box2D
         for (MapObject mapobMain: tilmap1.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rectObject = ((RectangleMapObject) mapobMain).getRectangle();
             bdefMain.type = BodyDef.BodyType.StaticBody;
@@ -30,6 +31,7 @@ public class WorldLoader {
             fixdefMain.shape = psMain;
             bodMain.createFixture(fixdefMain);
         }
+        //Loading Pipes into Box2D
         for (MapObject mapobMain: tilmap1.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rectObject = ((RectangleMapObject) mapobMain).getRectangle();
             bdefMain.type = BodyDef.BodyType.StaticBody;
@@ -39,6 +41,7 @@ public class WorldLoader {
             fixdefMain.shape = psMain;
             bodMain.createFixture(fixdefMain);
         }
+        //Loading Bricks into Box2D
         for (MapObject mapobMain: tilmap1.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rectObject = ((RectangleMapObject) mapobMain).getRectangle();
             bdefMain.type = BodyDef.BodyType.StaticBody;
@@ -48,6 +51,7 @@ public class WorldLoader {
             fixdefMain.shape = psMain;
             bodMain.createFixture(fixdefMain);
         }
+        //Loading Blocks into Box2D
         for (MapObject mapobMain: tilmap1.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rectObject = ((RectangleMapObject) mapobMain).getRectangle();
             bdefMain.type = BodyDef.BodyType.StaticBody;
