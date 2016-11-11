@@ -10,7 +10,7 @@ public class GamDev extends Game {
     @Override
     public void create() {
         sbMain = new SpriteBatch();
-        setScreen(new ScrMainMenu());
+        setScreen(new ScrGame());
     }
     @Override
     public void dispose() {
